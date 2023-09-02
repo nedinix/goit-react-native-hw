@@ -9,6 +9,7 @@ import {
 	Text,
 	StyleSheet,
 	Pressable,
+	TouchableOpacity,
 	TouchableWithoutFeedback,
 	Image,
 	Keyboard,
@@ -20,8 +21,7 @@ const Registration = () => {
 	const [loginButton, onLoginButton] = useState("");
 	const [emailInput, onChangeEmailInput] = useState("");
 	const [passwordInput, onChangePasswordInput] = useState("");
-	const [passwordTextHidden, setPasswordTextHidden] = useState("");
-	const [isFocusedLogo, setIsFocusedLogo] = useState(false);
+	const [passwordStatusHidden, setPasswordStatusHidden] = useState(true);
 	const [onInputFocus, setOnInputFocus] = useState("");
 	const [keyboardStatusHidden, setKeyboardStatusHidden] = useState(true);
 
@@ -41,8 +41,8 @@ const Registration = () => {
 		};
 	}, []);
 
-	const togglePasswordTextHidden = () => {
-		setPasswordTextHidden(!passwordTextHidden);
+	const togglePasswordStatusHidden = () => {
+		setPasswordStatusHidden(!passwordStatusHidden);
 	};
 
 	return (
@@ -105,7 +105,6 @@ const Registration = () => {
 										placeholder="Логін"
 										selectionColor={"#FF6C00"}
 										onFocus={() => setOnInputFocus("login")}
-										onSubmitEditing={() => setOnInputFocus("")}
 									/>
 									<TextInput
 										style={
@@ -116,19 +115,28 @@ const Registration = () => {
 										placeholder="Адреса електронної пошти"
 										selectionColor={"#FF6C00"}
 										onFocus={() => setOnInputFocus("email")}
-										onSubmitEditing={() => setOnInputFocus("")}
 									/>
-									<TextInput
-										style={
-											onInputFocus === "password"
-												? { ...styles.input, ...styles.inputFocus }
-												: { ...styles.input, ...styles.inputDefault }
-										}
-										placeholder="Пароль"
-										selectionColor={"#FF6C00"}
-										onFocus={() => setOnInputFocus("password")}
-										onSubmitEditing={() => setOnInputFocus("")}
-									/>
+									<View>
+										<TextInput
+											style={
+												onInputFocus === "password"
+													? { ...styles.input, ...styles.inputFocus }
+													: { ...styles.input, ...styles.inputDefault }
+											}
+											placeholder="Пароль"
+											selectionColor={"#FF6C00"}
+											onFocus={() => setOnInputFocus("password")}
+											secureTextEntry={passwordStatusHidden}
+										/>
+										<TouchableOpacity
+											style={styles.passwordStatus}
+											onPress={togglePasswordStatusHidden}
+										>
+											<Text style={{ color: "#1B4371" }}>
+												{passwordStatusHidden ? "Показати" : "Сховати"}
+											</Text>
+										</TouchableOpacity>
+									</View>
 								</View>
 							</>
 						</TouchableWithoutFeedback>
@@ -239,6 +247,11 @@ const styles = StyleSheet.create({
 	loginLink: {
 		color: "#1B4371",
 		textAlign: "center",
+	},
+	passwordStatus: {
+		position: "absolute",
+		top: 16,
+		right: 16,
 	},
 });
 

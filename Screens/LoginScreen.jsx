@@ -9,6 +9,7 @@ import {
 	Text,
 	StyleSheet,
 	Pressable,
+	TouchableOpacity,
 	TouchableWithoutFeedback,
 	Image,
 	Keyboard,
@@ -20,7 +21,7 @@ const Login = () => {
 	const [loginButton, onLoginButton] = useState("");
 	const [emailInput, onChangeEmailInput] = useState("");
 	const [passwordInput, onChangePasswordInput] = useState("");
-	const [passwordTextHidden, setPasswordTextHidden] = useState("");
+	const [passwordStatusHidden, setPasswordStatusHidden] = useState(true);
 	const [onInputFocus, setOnInputFocus] = useState("");
 	const [keyboardStatusHidden, setKeyboardStatusHidden] = useState(true);
 
@@ -40,8 +41,8 @@ const Login = () => {
 		};
 	}, []);
 
-	const togglePasswordTextHidden = () => {
-		setPasswordTextHidden(!passwordTextHidden);
+	const togglePasswordStatusHidden = () => {
+		setPasswordStatusHidden(!passwordStatusHidden);
 	};
 
 	return (
@@ -49,7 +50,7 @@ const Login = () => {
 			<ImageBackground
 				style={{
 					...styles.bgImage,
-					paddingTop: keyboardStatusHidden ? 260 : 150,
+					paddingTop: keyboardStatusHidden ? 325 : 275,
 				}}
 				source={bgImage}
 				resizeMode="cover"
@@ -75,20 +76,30 @@ const Login = () => {
 										}
 										placeholder="Адреса електронної пошти"
 										selectionColor={"#FF6C00"}
-										onSubmitEditing={Keyboard.dismiss}
 										onFocus={() => setOnInputFocus("email")}
 									/>
-									<TextInput
-										style={
-											onInputFocus === "password"
-												? { ...styles.input, ...styles.inputFocus }
-												: { ...styles.input, ...styles.inputDefault }
-										}
-										placeholder="Пароль"
-										selectionColor={"#FF6C00"}
-										onSubmitEditing={Keyboard.dismiss}
-										onFocus={() => setOnInputFocus("password")}
-									/>
+									<View>
+										<TextInput
+											style={
+												onInputFocus === "password"
+													? { ...styles.input, ...styles.inputFocus }
+													: { ...styles.input, ...styles.inputDefault }
+											}
+											onChangeText={onChangePasswordInput}
+											placeholder="Пароль"
+											selectionColor={"#FF6C00"}
+											onFocus={() => setOnInputFocus("password")}
+											secureTextEntry={passwordStatusHidden}
+										/>
+										<TouchableOpacity
+											style={styles.passwordStatus}
+											onPress={togglePasswordStatusHidden}
+										>
+											<Text style={{ color: "#1B4371" }}>
+												{passwordStatusHidden ? "Показати" : "Сховати"}
+											</Text>
+										</TouchableOpacity>
+									</View>
 								</View>
 							</>
 						</TouchableWithoutFeedback>
@@ -103,7 +114,18 @@ const Login = () => {
 								style={styles.buttonAlreadyLogin}
 								onPress={() => navigation.navigate("Registration")}
 							>
-								<Text style={styles.loginLink}>Вже є аккаунт? Увійти</Text>
+								<Text style={styles.loginLink}>
+									Немає акаунту?{" "}
+									<Text
+										style={{
+											textDecorationLine: "underline",
+											textDecorationStyle: "solid",
+											textDecorationColor: "#1B4371",
+										}}
+									>
+										Зареєструватися
+									</Text>
+								</Text>
 							</Pressable>
 						</View>
 					</KeyboardAvoidingView>
@@ -119,6 +141,7 @@ const styles = StyleSheet.create({
 	},
 	formWrapper: {
 		flex: 1,
+		paddingTop: 32,
 		paddingLeft: 16,
 		paddingRight: 16,
 		paddingBottom: 45,
@@ -133,25 +156,6 @@ const styles = StyleSheet.create({
 		width: Dimensions.get("window").width,
 		height: Dimensions.get("window").height,
 		paddingTop: 263,
-	},
-	profileImageWrapper: {
-		marginTop: -60,
-		marginBottom: 32,
-		width: 120,
-		height: 120,
-
-		alignSelf: "center",
-		position: "relative",
-	},
-
-	profileImage: {
-		width: 120,
-		height: 120,
-	},
-	profileAddIcon: {
-		position: "absolute",
-		left: 107,
-		bottom: 14,
 	},
 	input: {
 		marginBottom: 16,
@@ -175,10 +179,9 @@ const styles = StyleSheet.create({
 	},
 	sectionTitle: {
 		marginBottom: 32,
-		// fontFamily: "Roboto-Regular",
+		fontFamily: "Roboto-Regular",
 		textAlign: "center",
 		fontSize: 30,
-		// color: "#1B4371",
 		color: "#212121",
 	},
 	registrationButton: {
@@ -188,7 +191,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: "#FF6C00",
 		borderRadius: 100,
-		// color: "#FFFFFF",
 	},
 	registrationButtonText: {
 		fontSize: 16,
@@ -197,6 +199,11 @@ const styles = StyleSheet.create({
 	loginLink: {
 		color: "#1B4371",
 		textAlign: "center",
+	},
+	passwordStatus: {
+		position: "absolute",
+		top: 16,
+		right: 16,
 	},
 });
 
