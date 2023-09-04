@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import Svg, { Circle, Path } from "react-native-svg";
 import {
 	View,
 	KeyboardAvoidingView,
@@ -11,21 +10,27 @@ import {
 	Pressable,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
-	Image,
+	Alert,
 	Keyboard,
 	Dimensions,
 } from "react-native";
 import bgImage from "../assets/images/reg-scr-bg.jpg";
 
 const Login = () => {
-	const [loginButton, onLoginButton] = useState("");
-	const [emailInput, onChangeEmailInput] = useState("");
-	const [passwordInput, onChangePasswordInput] = useState("");
+	const [emailInput, setEmailInput] = useState("");
+	const [passwordInput, setPasswordInput] = useState("");
 	const [passwordStatusHidden, setPasswordStatusHidden] = useState(true);
 	const [onInputFocus, setOnInputFocus] = useState("");
 	const [keyboardStatusHidden, setKeyboardStatusHidden] = useState(true);
 
 	const navigation = useNavigation();
+
+	const onLogin = () => {
+		Alert.alert(
+			"Login data :",
+			`email: ${emailInput}\npassword: ${passwordInput}`
+		);
+	};
 
 	useEffect(() => {
 		const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -46,68 +51,62 @@ const Login = () => {
 	};
 
 	return (
-		<View style={styles.container}>
-			<ImageBackground
-				style={{
-					...styles.bgImage,
-					paddingTop: keyboardStatusHidden ? 325 : 275,
-				}}
-				source={bgImage}
-				resizeMode="cover"
-			>
-				<View
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+			<View style={styles.container}>
+				<ImageBackground
 					style={{
-						...styles.formWrapper,
+						...styles.bgImage,
+						paddingTop: keyboardStatusHidden ? 325 : 275,
 					}}
+					source={bgImage}
+					resizeMode="cover"
 				>
-					<KeyboardAvoidingView
-						behavior={Platform.OS == "ios" ? "padding" : "height"}
-						style={{ flex: 1 }}
-					>
-						<TouchableWithoutFeedback>
-							<>
-								<View style={styles.inputsWrapper}>
-									<Text style={styles.sectionTitle}>Увійти</Text>
+					<View style={styles.contentWrapper}>
+						<Text style={{ ...styles.sectionTitle }}>Увійти</Text>
+						<KeyboardAvoidingView
+							behavior={Platform.OS == "ios" ? "padding" : "height"}
+							style={{ flex: 1 }}
+						>
+							<View style={{ ...styles.inputsWrapper, flex: 1 }}>
+								<TextInput
+									style={
+										onInputFocus === "email"
+											? { ...styles.input, ...styles.inputFocus }
+											: { ...styles.input, ...styles.inputDefault }
+									}
+									placeholder="Адреса електронної пошти"
+									selectionColor={"#FF6C00"}
+									onFocus={() => setOnInputFocus("email")}
+									value={emailInput}
+									onChangeText={setEmailInput}
+								/>
+								<View>
 									<TextInput
 										style={
-											onInputFocus === "email"
+											onInputFocus === "password"
 												? { ...styles.input, ...styles.inputFocus }
 												: { ...styles.input, ...styles.inputDefault }
 										}
-										placeholder="Адреса електронної пошти"
+										placeholder="Пароль"
 										selectionColor={"#FF6C00"}
-										onFocus={() => setOnInputFocus("email")}
+										onFocus={() => setOnInputFocus("password")}
+										secureTextEntry={passwordStatusHidden}
+										value={passwordInput}
+										onChangeText={setPasswordInput}
 									/>
-									<View>
-										<TextInput
-											style={
-												onInputFocus === "password"
-													? { ...styles.input, ...styles.inputFocus }
-													: { ...styles.input, ...styles.inputDefault }
-											}
-											onChangeText={onChangePasswordInput}
-											placeholder="Пароль"
-											selectionColor={"#FF6C00"}
-											onFocus={() => setOnInputFocus("password")}
-											secureTextEntry={passwordStatusHidden}
-										/>
-										<TouchableOpacity
-											style={styles.passwordStatus}
-											onPress={togglePasswordStatusHidden}
-										>
-											<Text style={{ color: "#1B4371" }}>
-												{passwordStatusHidden ? "Показати" : "Сховати"}
-											</Text>
-										</TouchableOpacity>
-									</View>
+									<TouchableOpacity
+										style={styles.passwordStatus}
+										onPress={togglePasswordStatusHidden}
+									>
+										<Text style={{ color: "#1B4371" }}>
+											{passwordStatusHidden ? "Показати" : "Сховати"}
+										</Text>
+									</TouchableOpacity>
 								</View>
-							</>
-						</TouchableWithoutFeedback>
-						<View>
-							<Pressable
-								style={styles.registrationButton}
-								onPress={() => navigation.navigate("Registration")}
-							>
+							</View>
+						</KeyboardAvoidingView>
+						<View style={{ paddingBottom: 110 }}>
+							<Pressable style={styles.registrationButton} onPress={onLogin}>
 								<Text style={styles.registrationButtonText}>Увійти</Text>
 							</Pressable>
 							<Pressable
@@ -128,23 +127,24 @@ const Login = () => {
 								</Text>
 							</Pressable>
 						</View>
-					</KeyboardAvoidingView>
-				</View>
-			</ImageBackground>
-		</View>
+					</View>
+				</ImageBackground>
+			</View>
+		</TouchableWithoutFeedback>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		justifyContent: "flex-end",
+		alignItems: "center",
 	},
-	formWrapper: {
+	contentWrapper: {
 		flex: 1,
 		paddingTop: 32,
 		paddingLeft: 16,
 		paddingRight: 16,
-		paddingBottom: 45,
 		borderTopLeftRadius: 25,
 		borderTopRightRadius: 25,
 		backgroundColor: "#FFFFFF",
@@ -155,7 +155,10 @@ const styles = StyleSheet.create({
 		top: 0,
 		width: Dimensions.get("window").width,
 		height: Dimensions.get("window").height,
-		paddingTop: 263,
+		// paddingTop: 263,
+		// paddingTop: 325,
+		// flex: 1,
+		// justifyContent: "flex-end",
 	},
 	input: {
 		marginBottom: 16,
